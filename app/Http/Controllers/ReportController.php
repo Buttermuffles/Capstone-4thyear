@@ -14,19 +14,19 @@ class ReportController extends Controller
     public function index()
     {
         // Count unread guest messages
-        $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
+        $guestMessageCount = Message::where('IsReadEmployee', false)
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
 
         return view('admin.report.index', compact('guestMessageCount'));
     }
 
     public function downloadReport($id)
     {
-        // Count unread guest messages
-        $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
+        // Count guest messages that are unread
+        $guestMessageCount = Message::where('IsReadEmployee', false)
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
 
         $report = Report::find($id);
 

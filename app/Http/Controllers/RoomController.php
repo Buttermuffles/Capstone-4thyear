@@ -14,9 +14,9 @@ class RoomController extends Controller
     public function index()
     {
         // Count unread guest messages
-        $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
+        $guestMessageCount = Message::where('IsReadEmployee', false)
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
 
         return view('admin.room.index', compact('guestMessageCount'));
     }
@@ -24,9 +24,9 @@ class RoomController extends Controller
     public function addRoom()
     {
         // Count unread guest messages
-        $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
+        $guestMessageCount = Message::where('IsReadEmployee', false)
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
 
         return view('admin.room.add', compact('guestMessageCount'));
     }
@@ -37,9 +37,9 @@ class RoomController extends Controller
             $decryptedId = Crypt::decrypt($roomId);
             $room = Room::findOrFail($decryptedId);
             // Count unread guest messages
-            $guestMessageCount = Message::where('isGuestMessage', true)
-                                        ->where('IsReadGuest', false)
-                                        ->count();
+            $guestMessageCount = Message::where('IsReadEmployee', false)
+            ->where('IsReadEmployee', 0) // Change this condition
+            ->count();
 
             return view('admin.room.update', compact('room', 'guestMessageCount'));
         } catch (DecryptException $e) {
@@ -53,10 +53,9 @@ class RoomController extends Controller
             $decryptedId = Crypt::decrypt($roomId);
             $room = Room::findOrFail($decryptedId);
             // Count unread guest messages
-            $guestMessageCount = Message::where('isGuestMessage', true)
-                                        ->where('IsReadGuest', false)
-                                        ->count();
-
+            $guestMessageCount = Message::where('IsReadEmployee', false)
+            ->where('IsReadEmployee', 0) // Change this condition
+            ->count();
             return view('admin.room.view', compact('room', 'guestMessageCount'));
         } catch (DecryptException $e) {
             return redirect()->route('admin.room.index')->with('error', 'Invalid Room ID.');
@@ -66,9 +65,9 @@ class RoomController extends Controller
     public function receptionistIndex()
     {
         // Count unread guest messages
-        $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
+        $guestMessageCount = Message::where('IsReadEmployee', false)
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
 
         return view('admin.room.receptionist-room', compact('guestMessageCount'));
     }

@@ -8,7 +8,10 @@ class AmenitiesController extends Controller
 {
     public function index()
     {
-        $guestMessageCount = Message::where('isGuestMessage', true)->where('IsReadGuest', false)->count();
+        // Count guest messages that are unread
+        $guestMessageCount = Message::where('IsReadEmployee', false)
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
         return view('admin.amenities.index',compact('guestMessageCount'));
     }
 }

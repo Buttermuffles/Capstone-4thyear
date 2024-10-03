@@ -12,8 +12,10 @@ class DashboardController extends Controller
     public function index()
     {
         // Using the correct column for guest messages
-        $guestMessageCount = Message::where('isGuestMessage', true)->where('IsReadGuest', false)->count();
-        
+     // Count guest messages that are unread
+     $guestMessageCount = Message::where('IsReadEmployee', false)
+     ->where('IsReadEmployee', 0) // Change this condition
+     ->count();
         $totalRooms = Room::count();
         $occupiedRooms = Room::where('status', 'occupied')->count();
         $totalBooking = Reservation::where('Status', 'Booked')->count();

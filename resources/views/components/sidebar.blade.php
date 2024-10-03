@@ -43,7 +43,17 @@
             <x-menu-item title="Booking" url="{{ route('booking') }}" icon="fas fa-calendar-check mx-2" active="{{ request()->routeIs('booking') }}" />
             <x-menu-item title="Room" url="{{ route('receptionistRoom') }}" icon="fas fa-door-open mx-2" active="{{ request()->routeIs('receptionistRoom') }}" />
             <x-menu-item title="Payment" url="{{ route('payment') }}" icon="fas fa-credit-card mx-2" active="{{ request()->routeIs('payment') }}" />
-                <x-menu-item title="Message" url="{{ route('message') }}" icon="fas fa-envelope mx-2" badge="true" badgeCount="{{ $guestMessageCount }}" active="{{ request()->routeIs('message') }}" />
+                <x-menu-item 
+                title="Message" 
+                url="{{ route('message') }}" 
+                icon="fas fa-envelope mx-2" 
+                badge="{{ $guestMessageCount > 0 ? 'true' : '' }}" 
+                badgeCount="{{ $guestMessageCount > 0 ? $guestMessageCount : '' }}" 
+                active="{{ request()->routeIs('message') }}" 
+                style="{{ $guestMessageCount === 0 ? 'opacity: 0.5; pointer-events: none;' : '' }}" 
+            />
+            
+            
             <x-menu-item title="Amenities" url="{{ route('amenities') }}" icon="fas fa-concierge-bell mx-2" active="{{ request()->routeIs('amenities') }}" />
             <x-menu-item title="Check-in/out" url="{{ route('check-in-out') }}" icon="fas fa-sign-in-alt mx-2" active="{{ request()->routeIs('check-in-out') }}" />
             <x-menu-item title="Report" url="{{ route('report') }}" icon="fas fa-chart-bar mx-2" active="{{ request()->routeIs('report') }}" />

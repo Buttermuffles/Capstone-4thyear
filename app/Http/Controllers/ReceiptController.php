@@ -12,11 +12,10 @@ class ReceiptController extends Controller
 {
     public function index(Request $request)
     {
-        // Count unread guest messages
-        $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
-
+         // Count guest messages that are unread
+         $guestMessageCount = Message::where('IsReadEmployee', false)
+         ->where('IsReadEmployee', 0) // Change this condition
+         ->count();
         // Retrieve the payment record based on the reference number
         $payment = Payment::where('ReferenceNumber', $request->view)->first();
 

@@ -8,9 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Message extends Model
 {
     use HasFactory;
+
     protected $table = 'messages';
     protected $primaryKey = 'MessageId';
     public $timestamps = false;
+
     protected $fillable = [
         'GuestId',
         'EmployeeId',
@@ -31,13 +33,14 @@ class Message extends Model
     {
         return $this->belongsTo(Employee::class, 'EmployeeId', 'EmployeeId');
     }
+
     public function scopeUnreadForGuest($query, $guestId)
     {
-        return $query->where('GuestId', $guestId)->where('IsReadGuest', 0);
+        return $query->where('GuestId', $guestId)->where('IsReadEmployee', 0);
     }
 
     public function scopeUnreadCountForGuest($query, $guestId)
     {
-        return $query->where('GuestId', $guestId)->where('IsReadGuest', 0)->count();
+        return $query->where('GuestId', $guestId)->where('IsReadEmployee', 0);
     }
 }

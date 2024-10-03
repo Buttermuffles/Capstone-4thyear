@@ -10,9 +10,9 @@ class BookingController extends Controller
     public function index()
     {
         // Count guest messages that are unread
-        $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
+        $guestMessageCount = Message::where('IsReadEmployee', false)
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
 
         // Pass the guestMessageCount to the view
         return view('admin.booking.index', compact('guestMessageCount'));
@@ -22,8 +22,8 @@ class BookingController extends Controller
     {
         // If you need guestMessageCount here, repeat the same logic
         $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
 
         return view('admin.booking.create', compact('guestMessageCount'));
     }
@@ -34,9 +34,8 @@ class BookingController extends Controller
 
         // If you need guestMessageCount here as well
         $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
-
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
         return view('admin.booking.booking-details', compact('ReservationId', 'guestMessageCount'));
     }
 
@@ -44,8 +43,8 @@ class BookingController extends Controller
     {
         // If you need guestMessageCount here as well
         $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
+        ->where('IsReadEmployee', 0) // Change this condition
+        ->count();
 
         return view('admin.booking.check-in-out', compact('guestMessageCount'));
     }

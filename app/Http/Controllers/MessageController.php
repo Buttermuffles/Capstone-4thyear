@@ -10,12 +10,19 @@ use App\Models\Employee;
 
 class MessageController extends Controller
 {
+    
     public function index()
     {   
-        $guestMessageCount = Message::where('isGuestMessage', true)
-                                    ->where('IsReadGuest', false)
-                                    ->count();
-                                    
+        // Count guest messages that are unread
+        $guestMessageCount = Message::where('IsReadEmployee', false)
+            ->orWhere('IsReadEmployee', 0) // Change this condition
+            ->count();
+    
+        // Mark unread messages as read
+        Message::where('IsReadEmployee', false)
+            ->orWhere('IsReadEmployee', 0) // Same condition
+            ->update(['IsReadEmployee' => 1]);
+    
         return view('admin.message.index', compact('guestMessageCount'));
     }
     
