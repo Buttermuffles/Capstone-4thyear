@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Message; // Import the Message model
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -11,12 +12,17 @@ class ReceiptController extends Controller
 {
     public function index(Request $request)
     {
+        // Count unread guest messages
+        $guestMessageCount = Message::where('isGuestMessage', true)
+                                    ->where('IsReadGuest', false)
+                                    ->count();
+
         // Retrieve the payment record based on the reference number
         $payment = Payment::where('ReferenceNumber', $request->view)->first();
 
         // Generate the PDF using the payment details
         $amountInWords = $this->convertNumberToWords($payment->AmountPaid);
-        $pdf = Pdf::loadView('receipt.index', compact('payment', 'amountInWords'));
+        $pdf = Pdf::loadView('receipt.index', compact('payment', 'amountInWords', 'guestMessageCount'));
 
         return $pdf->stream($request->view . '.pdf');
     }
@@ -65,5 +71,4 @@ class ReceiptController extends Controller
 
         return trim($words);
     }
-
 }

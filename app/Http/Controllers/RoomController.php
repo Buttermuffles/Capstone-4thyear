@@ -5,21 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Room;
 use App\Models\RoomPictures;
+use App\Models\Message; // Import the Message model
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 
-
 class RoomController extends Controller
 {
-
     public function index()
     {
-        return view('admin.room.index');
+        // Count unread guest messages
+        $guestMessageCount = Message::where('isGuestMessage', true)
+                                    ->where('IsReadGuest', false)
+                                    ->count();
+
+        return view('admin.room.index', compact('guestMessageCount'));
     }
 
     public function addRoom()
     {
-        return view('admin.room.add');
+        // Count unread guest messages
+        $guestMessageCount = Message::where('isGuestMessage', true)
+                                    ->where('IsReadGuest', false)
+                                    ->count();
+
+        return view('admin.room.add', compact('guestMessageCount'));
     }
 
     public function updateRoom($roomId)
@@ -27,17 +36,28 @@ class RoomController extends Controller
         try {
             $decryptedId = Crypt::decrypt($roomId);
             $room = Room::findOrFail($decryptedId);
-            return view('admin.room.update', compact('room'));
+            // Count unread guest messages
+            $guestMessageCount = Message::where('isGuestMessage', true)
+                                        ->where('IsReadGuest', false)
+                                        ->count();
+
+            return view('admin.room.update', compact('room', 'guestMessageCount'));
         } catch (DecryptException $e) {
             return redirect()->route('admin.room.index')->with('error', 'Invalid Room ID.');
         }
     }
 
-    public function viewRoom($roomId){
+    public function viewRoom($roomId)
+    {
         try {
             $decryptedId = Crypt::decrypt($roomId);
             $room = Room::findOrFail($decryptedId);
-            return view('admin.room.view', compact('room'));
+            // Count unread guest messages
+            $guestMessageCount = Message::where('isGuestMessage', true)
+                                        ->where('IsReadGuest', false)
+                                        ->count();
+
+            return view('admin.room.view', compact('room', 'guestMessageCount'));
         } catch (DecryptException $e) {
             return redirect()->route('admin.room.index')->with('error', 'Invalid Room ID.');
         }
@@ -45,11 +65,11 @@ class RoomController extends Controller
 
     public function receptionistIndex()
     {
-        return view('admin.room.receptionist-room');
+        // Count unread guest messages
+        $guestMessageCount = Message::where('isGuestMessage', true)
+                                    ->where('IsReadGuest', false)
+                                    ->count();
+
+        return view('admin.room.receptionist-room', compact('guestMessageCount'));
     }
-
-
-
-
-
 }

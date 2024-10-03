@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\Reservation;
 use App\Models\Room;
+use App\Models\Message; // Make sure to import your Message model
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        // Using the correct column for guest messages
+        $guestMessageCount = Message::where('isGuestMessage', true)->where('IsReadGuest', false)->count();
+        
         $totalRooms = Room::count();
         $occupiedRooms = Room::where('status', 'occupied')->count();
         $totalBooking = Reservation::where('Status', 'Booked')->count();
@@ -25,15 +29,17 @@ class DashboardController extends Controller
         $checkOutCount = Reservation::whereDate('DateCheckOut', today())
             ->where('Status', 'Check Out')->count();
 
-        return view('admin.dashboard.index', [
-            'totalRooms' => $totalRooms,
-            'occupiedRooms' => $occupiedRooms,
-            'availableRooms' => $availableRooms,
-            'totalBooking' => $totalBooking,
-            'totalReservation' => $totalReservation,
-            'user' => $user,
-            'checkInCount' => $checkInCount,
-            'checkOutCount' => $checkOutCount,
-        ]);
+            return view('admin.dashboard.index', [
+                'totalRooms' => $totalRooms,
+                'occupiedRooms' => $occupiedRooms,
+                'availableRooms' => $availableRooms,
+                'totalBooking' => $totalBooking,
+                'totalReservation' => $totalReservation,
+                'user' => $user,
+                'checkInCount' => $checkInCount,
+                'checkOutCount' => $checkOutCount,
+                'guestMessageCount' => $guestMessageCount, // Ensure this is included
+            ]);
+            
     }
 }

@@ -11,9 +11,14 @@ use App\Models\Employee;
 class MessageController extends Controller
 {
     public function index()
-    {
-        return view('admin.message.index');
+    {   
+        $guestMessageCount = Message::where('isGuestMessage', true)
+                                    ->where('IsReadGuest', false)
+                                    ->count();
+                                    
+        return view('admin.message.index', compact('guestMessageCount'));
     }
+    
 
     public function sendGuestMessage(Request $request)
     {

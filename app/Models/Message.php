@@ -31,4 +31,13 @@ class Message extends Model
     {
         return $this->belongsTo(Employee::class, 'EmployeeId', 'EmployeeId');
     }
+    public function scopeUnreadForGuest($query, $guestId)
+    {
+        return $query->where('GuestId', $guestId)->where('IsReadGuest', 0);
+    }
+
+    public function scopeUnreadCountForGuest($query, $guestId)
+    {
+        return $query->where('GuestId', $guestId)->where('IsReadGuest', 0)->count();
+    }
 }
