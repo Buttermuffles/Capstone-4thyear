@@ -17,7 +17,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\XenditController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReportController;
-
+use App\Http\Controllers\NotificationController;
 Route::get('', [LoginController::class, 'index'])->name('index');
 Route::get('login', [LoginController::class, 'index'])->name('login');
 Route::post('login', [LoginController::class, 'login'])->name('login');
@@ -76,6 +76,9 @@ Route::get('receptionist/payment/receipt', [ReceiptController::class, 'index'])-
 Route::get('receptionist/report', [ReportController::class, 'index'])->name('report');
 
 Route::get('receptionist/check-in-out', [BookingController::class, 'checkInOut'])->name('check-in-out');
+
+
+Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
 
 Route::get('send-mail', [XenditController::class, 'index'])->name('send-mail');

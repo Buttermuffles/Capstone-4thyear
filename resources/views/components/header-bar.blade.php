@@ -1,5 +1,5 @@
 <nav class="flex drop-shadow h-auto bg-white p-3 justify-end z-50">
-    <div class="grid grid-cols-2 gap-2 items-center px-2 my-1 ">
+    <div class="grid grid-cols-2 gap-2 items-center px-2 my-1">
 
         <div class="relative">
             <button data-dropdown-toggle="notificationDropdown" data-dropdown-delay="500"
@@ -16,7 +16,8 @@
         <div id="notificationDropdown"
             class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-lg drop-shadow-sm w-52 dark:bg-gray-700 p-1 max-h-60 overflow-y-auto">
             @forelse ($notifications as $notification)
-                <div class="p-2 rounded-lg hover:bg-slate-100">
+                <div class="p-2 rounded-lg hover:bg-slate-100 cursor-pointer"
+                     onclick="markAsRead({{ $notification->id }}, this)">
                     <p class="text-xs font-semibold truncate">{{ $notification->title }}</p>
                     <p class="text-xs">{{ $notification->message }}</p>
                     <span class="text-xs text-slate-500">{{ $notification->created_at->diffForHumans() }}</span>
@@ -45,3 +46,39 @@
         </div>
     </div>
 </nav>
+
+<script>
+function markAsRead(notificationId, element) {
+    // Make AJAX request to mark the notification as read
+    fetch(`/notifications/${notificationId}/read`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}' // Include CSRF token for security
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            // Remove the notification from the UI
+            element.remove();
+            // Optionally, update unread count
+            updateUnreadCount();
+        } else {
+            console.error('Failed to mark notification as read.');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function updateUnreadCount() {
+    // Optionally update the unread count in the UI
+    let unreadCountElement = document.querySelector('.absolute.left-4');
+    let currentCount = parseInt(unreadCountElement.innerText);
+    if (currentCount > 0) {
+        unreadCountElement.innerText = currentCount - 1;
+        if (currentCount === 1) {
+            unreadCountElement.remove(); // Remove if no more unread notifications
+        }
+    }
+}
+</script>

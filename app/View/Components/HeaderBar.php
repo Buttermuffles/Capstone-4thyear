@@ -12,25 +12,33 @@ class HeaderBar extends Component
     public $unreadCount;
     public $notifications;
 
-    /**
-     * Create a new component instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
-        // Fetch the unread notifications ordered by created_at descending
+        $this->loadNotifications();
+    }
+
+    // Load notifications and unread count
+    private function loadNotifications()
+    {
         $this->notifications = Notification::where('status', 'unread')
-            ->orderBy('created_at', 'desc') // Order by created_at
-            ->limit(5) // Limit to 5 notifications
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
             ->get();
 
         $this->unreadCount = $this->notifications->count();
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     */
+    // Mark notification as read
+    public function markAsRead($notificationId)
+    {
+        $notification = Notification::find($notificationId);
+
+        if ($notification) {
+            $notification->update(['status' => 'read']); // Update the status
+            $this->loadNotifications(); // Reload notifications to update counts
+        }
+    }
+
     public function render(): View|Closure|string
     {
         return view('components.header-bar', [
