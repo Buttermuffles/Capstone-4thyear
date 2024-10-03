@@ -26,75 +26,165 @@
                 <button x-data x-on:click="$dispatch('open-modal', {name: 'add-modal-sub-guest'})"
                     class="bg-blue-800 text-white px-4 py-2 rounded-lg border border-transparent hover:border-blue-600 hover:text-slate-950 hover:bg-white">Sub Guest</button>
             </div>
-            
-                   {{-- <a //href="{{ route('receipt', ['view' => Crypt::encrypt($payment->ReferenceNumber)]) }}" target="_blank"
-                        class="bg-green-800 text-white px-2 py-3 rounded-lg border hover:border-green-800 hover:text-slate-950 hover:bg-white">Generate Receipt</a>
- --}}
-
         </div>
 
+<!-- Add Payment Modal -->
+<x-modal title="Add Payment" name="add-modal-payment">
+    @slot('body')
+        <form wire:submit.prevent="addPayment">
+            <div class="grid gap-4 mb-4 grid-cols-2">
+                <div class="col-span-2">
+                    <x-text-field1 name="payment" placeholder="Enter the amount to be paid" model="payment"
+                        label="Payment" type="number" />
+                    @error('payment')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+            </div>
+            <button type="submit"
+                class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Confirm Payment
+            </button>
+        </form>
+    @endslot
+</x-modal>
 
-        <x-modal title="Add Payment" name="add-modal-payment">
-            @slot('body')
-                <form wire:submit.prevent="addPayment">
-                    <div class="grid gap-4 mb-4 grid-cols-2">
+<!-- Add Sub Guest Modal -->
+<x-modal title="Add Sub Guest" name="add-modal-sub-guest">
+    @slot('body')
+        <form wire:submit.prevent="addSubGuest">
+            <input type="hidden" wire:model="ReservationId" /> <!-- Hidden input for ReservationId -->
+            <div class="grid gap-6 mb-4 grid-cols-1 md:grid-cols-2">
+                <!-- First Name -->
+                <div>
+                    <x-text-field1 name="subGuestFirstName" placeholder="Enter First Name" model="subGuestFirstName"
+                        label="First Name" type="text" />
+                    @error('subGuestFirstName')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
 
-                        <div class="col-span-2">
-                            <x-text-field1 name="payment" placeholder="Enter the amnount to paid" model="payment"
-                                label="Payment " type="number" />
-                            @error('payment')
-                                <p class="text-red-500 text-xs italic mt-1">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-                    </div>
-                    <button type="submit"
-                        class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Confirm Payment
-                    </button>
-                </form>
-            @endslot
-        </x-modal>
+                <!-- Last Name -->
+                <div>
+                    <x-text-field1 name="subGuestLastName" placeholder="Enter Last Name" model="subGuestLastName"
+                        label="Last Name" type="text" />
+                    @error('subGuestLastName')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
 
-        <x-modal title="Add New Amenities" name="add-modal-amenities">
-            @slot('body')
-                <form wire:submit.prevent="addAmenities">
-                    <div class="grid gap-4 mb-4 grid-cols-2">
-                        <div class="col-span-2">
-                            <label for="amenitySelect" class="block text-sm font-medium text-gray-700">Select
-                                Amenity</label>
-                            <select wire:model="amenity_id" id="amenitySelect"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-50">
-                                <option value="">Select an Amenity</option> <!-- Default option -->
-                                @foreach ($Amenities as $amenity)
-                                    <option value="{{ $amenity->AmenitiesId }}">{{ $amenity->Name }}</option>
-                                @endforeach
-                            </select>
-                            @error('amenity_id')
-                                <p class="text-red-500 text-xs italic mt-1">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-                        <div class="col-span-2">
-                            <x-text-field1 name="quantity" placeholder="Enter the quantity" model="quantity"
-                                label="Quantity" type="number" />
-                            @error('quantity')
-                                <p class="text-red-500 text-xs italic mt-1">
-                                    <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-                    </div>
-                    <button type="submit"
-                        class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Add New Amenities
-                    </button>
-                </form>
-            @endslot
-        </x-modal>
+                <!-- Middle Name -->
+                <div>
+                    <x-text-field1 name="subGuestMiddleName" placeholder="Enter Middle Name (optional)" model="subGuestMiddleName"
+                        label="Middle Name" type="text" />
+                    @error('subGuestMiddleName')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
 
+                <!-- Contact Number -->
+                <div>
+                    <x-text-field1 name="subGuestContactNumber" placeholder="Enter Contact Number" model="subGuestContactNumber"
+                        label="Contact Number" type="text" />
+                    @error('subGuestContactNumber')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+                <!-- Email Address -->
+                <div>
+                    <x-text-field1 name="subGuestEmailAddress" placeholder="Enter Email Address" model="subGuestEmailAddress"
+                        label="Email Address" type="email" />
+                    @error('subGuestEmailAddress')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+                <!-- Birthdate -->
+                <div>
+                    <x-text-field1 name="subGuestBirthdate" placeholder="Enter Birthdate" model="subGuestBirthdate"
+                        label="Birthdate" type="date" />
+                    @error('subGuestBirthdate')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+                <!-- Gender -->
+                <div>
+                    <x-select name="subGuestGender" label="Gender" model="subGuestGender">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </x-select>
+                    @error('subGuestGender')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit"
+                    class="bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 transition duration-200 ease-in-out">
+                    Add Sub Guest
+                </button>
+            </div>
+        </form>
+    @endslot
+</x-modal>
+
+<!-- Add New Amenities Modal -->
+<x-modal title="Add New Amenities" name="add-modal-amenities">
+    @slot('body')
+        <form wire:submit.prevent="addAmenities">
+            <div class="grid gap-4 mb-4 grid-cols-2">
+                <div class="col-span-2">
+                    <label for="amenitySelect" class="block text-sm font-medium text-gray-700">Select Amenity</label>
+                    <select wire:model="amenity_id" id="amenitySelect"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-50">
+                        <option value="">Select an Amenity</option> <!-- Default option -->
+                        @foreach ($Amenities as $amenity)
+                            <option value="{{ $amenity->AmenitiesId }}">{{ $amenity->Name }}</option>
+                        @endforeach
+                    </select>
+                    @error('amenity_id')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+                <div class="col-span-2">
+                    <x-text-field1 name="quantity" placeholder="Enter the quantity" model="quantity"
+                        label="Quantity" type="number" />
+                    @error('quantity')
+                        <p class="text-red-500 text-xs italic mt-1">
+                            <i class="fas fa-exclamation-circle"></i> {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+            </div>
+            <button type="submit"
+                class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                Add New Amenities
+            </button>
+        </form>
+    @endslot
+</x-modal>
         <div class="grid grid-cols-3 mt-2 shadow-lg rounded-lg mb-5 p-5">
             <div class="grid grid-cols-2 gap-2 items-start">
                 <div class="font-bold text-base">Reservation Number:</div>
@@ -311,109 +401,8 @@
 
         </div>
     </div>  
-    <x-modal title="Add Sub Guest" name="add-modal-sub-guest" class="max-w-xl h-auto">
-        @slot('body')
-            <form wire:submit.prevent="addSubGuest" class="space-y-4">
-                <input type="hidden" wire:model="ReservationId" /> <!-- Hidden input for ReservationId -->
-    
-                <div class="grid gap-6 mb-4 grid-cols-1 md:grid-cols-2">
-                    <!-- First Name -->
-                    <div>
-                        <x-text-field1 name="subGuestFirstName" placeholder="Enter First Name" model="subGuestFirstName"
-                            label="First Name" type="text" />
-                        @error('subGuestFirstName')
-                            <p class="text-red-500 text-xs italic mt-1">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-    
-                    <!-- Last Name -->
-                    <div>
-                        <x-text-field1 name="subGuestLastName" placeholder="Enter Last Name" model="subGuestLastName"
-                            label="Last Name" type="text" />
-                        @error('subGuestLastName')
-                            <p class="text-red-500 text-xs italic mt-1">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-    
-                    <!-- Middle Name -->
-                    <div>
-                        <x-text-field1 name="subGuestMiddleName" placeholder="Enter Middle Name (optional)" model="subGuestMiddleName"
-                            label="Middle Name" type="text" />
-                        @error('subGuestMiddleName')
-                            <p class="text-red-500 text-xs italic mt-1">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-    
-                    <!-- Contact Number -->
-                    <div>
-                        <x-text-field1 name="subGuestContactNumber" placeholder="Enter Contact Number" model="subGuestContactNumber"
-                            label="Contact Number" type="text" />
-                        @error('subGuestContactNumber')
-                            <p class="text-red-500 text-xs italic mt-1">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-    
-                    <!-- Email Address -->
-                    <div>
-                        <x-text-field1 name="subGuestEmailAddress" placeholder="Enter Email Address" model="subGuestEmailAddress"
-                            label="Email Address" type="email" />
-                        @error('subGuestEmailAddress')
-                            <p class="text-red-500 text-xs italic mt-1">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-    
-                    <!-- Birthdate -->
-                    <div>
-                        <x-text-field1 name="subGuestBirthdate" placeholder="Enter Birthdate" model="subGuestBirthdate"
-                            label="Birthdate" type="date" />
-                        @error('subGuestBirthdate')
-                            <p class="text-red-500 text-xs italic mt-1">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-    
-                    <!-- Gender -->
-                    <div>
-                        <x-select name="subGuestGender" label="Gender" model="subGuestGender">
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                        </x-select>
-                        @error('subGuestGender')
-                            <p class="text-red-500 text-xs italic mt-1">
-                                <i class="fas fa-exclamation-circle"></i> {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-                </div>
-            </form>
-        @endslot
-    
-        @slot('footer')
-            <div class="flex justify-end">
-                <button type="submit"
-                    class="bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 transition duration-200 ease-in-out">
-                    Add Sub Guest
-                </button>
-            </div>
-        @endslot
-    </x-modal>
-    
-    
-    
-    
+
+
     
     @if (session()->has('message'))
         <x-success-message-modal message="{{ session('message') }}" />

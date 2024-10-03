@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Reservation;
-use App\Models\Room; // Assuming you have a Room model
+use App\Models\Room;
 
 class DashboardController extends Controller
 {
@@ -19,7 +19,11 @@ class DashboardController extends Controller
 
         $user = Employee::where('Status', 'Active')->count();
 
-        // Fetch other necessary data...
+        // Fetch today's check-in and check-out counts
+        $checkInCount = Reservation::whereDate('DateCheckIn', today())
+            ->where('Status', 'Check In')->count();
+        $checkOutCount = Reservation::whereDate('DateCheckOut', today())
+            ->where('Status', 'Check Out')->count();
 
         return view('admin.dashboard.index', [
             'totalRooms' => $totalRooms,
@@ -28,7 +32,8 @@ class DashboardController extends Controller
             'totalBooking' => $totalBooking,
             'totalReservation' => $totalReservation,
             'user' => $user,
-
+            'checkInCount' => $checkInCount,
+            'checkOutCount' => $checkOutCount,
         ]);
     }
 }
