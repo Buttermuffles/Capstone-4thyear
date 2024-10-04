@@ -317,34 +317,38 @@
                         wire:model.live="checkOut" />
                 </div>
 
-
-                <div class="w-1/2">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total Adult
-                    </label>
-                    <select name="totalGuests" wire:model.live="totalGuests"
+                <div x-data="{ isDisabled: false }" class="w-1/2">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total Adult</label>
+                    <select name="totalGuests" wire:model.live="totalGuests" x-bind:disabled="isDisabled"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option value="">Total Adult</option>
-                        @for ($i = 1; $i < 11; $i++)
+                        <option value="" disabled selected>Total Adult</option> <!-- Ensure it remains unselected -->
+                        @for ($i = 0; $i <= 10; $i++) <!-- Start the loop from 0 -->
                             <option value="{{ $i }}">{{ $i }}</option>
                         @endfor
-
                     </select>
                 </div>
-
-                <div class="w-1/2">
-
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total Children
-                    </label>
+                
+                <div class="w-1/2 ">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total Children</label>
                     <select name="totalChildren" wire:model.live="totalChildren"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
-                        <option value="">Total Adult</option>
-                        @for ($i = 1; $i < 11; $i++)
+                        <option value="" disabled selected>Total Children</option> <!-- Ensure it remains unselected -->
+                        @for ($i = 0; $i <= 10; $i++) <!-- Start the loop from 0 -->
                             <option value="{{ $i }}">{{ $i }}</option>
                         @endfor
-
                     </select>
-
                 </div>
+                
+                <script>
+                    document.addEventListener('livewire:load', function () {
+                        Livewire.on('totalChildrenUpdated', value => {
+                            const totalGuestsSelect = document.querySelector('select[name="totalGuests"]');
+                            // Disable the 'Total Adult' dropdown if 'Total Children' is between 0 and 10
+                            totalGuestsSelect.disabled = (value >= 0 && value <= 10);
+                        });
+                    });
+                </script>
+                
 
             </div>
 
