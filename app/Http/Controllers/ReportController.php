@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Message; // Import the Message model
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Reservation;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Report;
+use App\Models\Guest;
 
 class ReportController extends Controller
 {
@@ -15,18 +16,21 @@ class ReportController extends Controller
     {
         // Count unread guest messages
         $guestMessageCount = Message::where('IsReadEmployee', false)
-        ->where('IsReadEmployee', 0) // Change this condition
-        ->count();
-
-        return view('admin.report.index', compact('guestMessageCount'));
+            ->orWhere('IsReadEmployee', 0) // Using orWhere for proper condition
+            ->count();
+    
+        // Retrieve guests for the dropdown
+        $guests = Guest::all(); // Fetch all guest records
+    
+        return view('admin.report.index', compact('guestMessageCount', 'guests'));
     }
 
     public function downloadReport($id)
     {
         // Count guest messages that are unread
         $guestMessageCount = Message::where('IsReadEmployee', false)
-        ->where('IsReadEmployee', 0) // Change this condition
-        ->count();
+            ->orWhere('IsReadEmployee', 0) // Using orWhere for proper condition
+            ->count();
 
         $report = Report::find($id);
 

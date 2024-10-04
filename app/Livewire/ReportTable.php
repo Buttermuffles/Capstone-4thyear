@@ -4,64 +4,87 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Report;
+use App\Models\Guest;  // Add the Guest model
 use Illuminate\Support\Carbon;
-class ReportTable extends Component
-{
 
+class ReportTable extends Component
+{ 
+    
+    public $guest_id;
     public $type;
     public $startdate;
     public $enddate;
     public $isEndDateDisabled = false;
-
     public $search = '';
 
     public function render()
     {
+        // Retrieve guests for the dropdown
+        $guests = Guest::all();
+
+        // Retrieve reports based on the search query and order by created date
         return view('livewire.report-table', [
-            'reports' => Report::search($this->search)->orderBy('CreatedAt', 'desc')->get()
+            'reports' => Report::search($this->search)->orderBy('CreatedAt', 'desc')->get(),
+            'guests' => $guests // Pass the guests to the view
         ]);
     }
 
-
     public function createReport()
-    {
+{
+    // Validation rules depending on the report type
+    if ($this->type === 'Guest History Report') {
+        $this->validate([
+            'type' => 'required|string',
+            'guest_id' => 'required|integer', // Ensure guest_id is validated
+        ]);
 
-        if ($this->type === 'Daily Revenue Report') {
-            $this->validate([
-                'type' => 'required|string',
-                'startdate' => 'required|date|before_or_equal:today',
-            ]);
-        } else {
-            $this->validate([
-                'type' => 'required|string',
-                'startdate' => 'required|date|before_or_equal:today',
-                'enddate' => 'required|date|before_or_equal:today',
-            ]);
-        }
-        $employeeId = auth()->id();
+        // Set Date and EndDate to the current date
+        $date = now();  // Current date
+        $endDate = now(); // Current date
 
-        $user = auth()->user();
-        $report = new Report();
-        $report->ReportName = $this->type ."-". now()->timestamp;
+    } elseif ($this->type === 'Daily Revenue Report') {
+        $this->validate([
+            'type' => 'required|string',
+            'startdate' => 'required|date|before_or_equal:today',
+        ]);
 
-        $report->type = $this->type;
-        $report->EmployeeId = $employeeId;
-        $report->Date = $this->startdate;
+        // Set Date to startdate and EndDate to null
+        $date = $this->startdate;
+        $endDate = null;
 
-        if ($this->type == 'Weekly Revenue Report') {
-            $report->EndDate = Carbon::parse($this->startdate)->addWeek();
-        }
+    } else {
+        $this->validate([
+            'type' => 'required|string',
+            'startdate' => 'required|date|before_or_equal:today',
+            'enddate' => 'required|date|before_or_equal:today',
+        ]);
 
-        if ($this->type == 'Monthly Revenue Report') {
-            $report->EndDate = Carbon::parse($this->startdate)->addMonth();
-        }
-
-
-        $report->CreatedAt = now();
-        $report->save();
+        // For other reports, set Date to startdate and EndDate to the specified enddate
+        $date = $this->startdate;
+        $endDate = $this->enddate;
     }
 
-    public function disableField(){
+    $employeeId = auth()->id(); // Get the authenticated employee ID
+    $report = new Report();
+
+    // Generate a report name based on type and timestamp
+    $report->ReportName = $this->type . "-" . now()->timestamp;
+
+    $report->type = $this->type;
+    $report->EmployeeId = $employeeId;
+    $report->Date = $date; // Set Date based on report type
+    $report->EndDate = $endDate; // Set EndDate based on report type
+
+    // Set the created date and save the report
+    $report->CreatedAt = now();
+    $report->save();
+}
+
+    
+    
+    public function disableField()
+    {
+        // Check if the report type contains 'Revenue Report' and disable the end date field accordingly
         $this->isEndDateDisabled = str_contains($this->type, 'Revenue Report');
     }
 }
